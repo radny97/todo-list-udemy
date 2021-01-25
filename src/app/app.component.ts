@@ -7,6 +7,9 @@ import {Task} from './task';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
+  editMode = false;
+  taskName = 'Sugerowane zadanie codzienne: odkurzanie';
+  taskDate = '';
   config: { [key: string]: string} = null;
 
   tasks: Task[] = [
@@ -23,7 +26,7 @@ export class AppComponent {
   {
     name: 'Hołownia',
     deadline: '2021-01-17',
-    done: false
+    done: true
   },
   {
     name: 'Nauka Angulara',
@@ -40,18 +43,42 @@ export class AppComponent {
         date: new Date().toDateString()
       };
     }, 500);
+    this.sortTasks();
   }
 
   clearTasks() {
     this.tasks = [];
   }
 
-  createTask(name, deadline){
+  createTask(){
     const task: Task = {
-      name,
-      deadline,
+      name: this.taskName,
+      deadline: this.taskDate,
       done: false,
     };
     this.tasks.push(task);
+    this.taskName = '';
+    this.taskDate = '';
+    this.sortTasks();
+  }
+
+  switchEditMode(){
+    this.editMode =! this.editMode;
+  }
+
+  markTaskAsDone(task: Task){
+    task.done = true;
+    this.sortTasks();
+  }
+
+  deleteTask(task: Task){
+    this.tasks = this.tasks.filter(e => e != task);
+    this.sortTasks();
+  }
+
+  private sortTasks(){
+    this.tasks = this.tasks.sort((a: Task, b: Task) => 
+    a.done === b.done ? 0 : a.done ? 1 : -1
+    );
   }
 }
